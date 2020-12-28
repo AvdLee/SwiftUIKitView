@@ -21,11 +21,11 @@ struct SwiftUIwithUIKitView: View {
     }
 }
 
-struct SwiftUIwithUIKitView_Previews: PreviewProvider {
-    static var previews: some View {
-        SwiftUIwithUIKitView()
-    }
-}
+//struct SwiftUIwithUIKitView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SwiftUIwithUIKitView()
+//    }
+//}
 
 // MARK: - UILabel Preview Example
 struct UILabelExample_Preview: PreviewProvider {
@@ -34,6 +34,7 @@ struct UILabelExample_Preview: PreviewProvider {
             .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
             .set(\.text, to: "Hello, UIKit!") // <- Use key paths for updates.
             .fixedSize() // <- Make sure the size is set
+            .previewLayout(.sizeThatFits)
             .previewDisplayName("UILabel Preview Example")
     }
 }
