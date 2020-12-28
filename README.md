@@ -7,6 +7,8 @@ Easily use UIKit views in SwiftUI.
 - Create Xcode Previews from `UIView` elements
 - SwiftUI functional updating `UIView` properties using a protocol with [Associated Types](https://www.avanderlee.com/swift/associated-types-protocols/).
 
+You can read more about [Getting started with UIKit in SwiftUI and visa versa](https://www.avanderlee.com/swiftui/integrating-swiftui-with-uikit/).
+
 ## Examples
 
 Using a `UIKit` view directly in SwiftUI:
