@@ -37,12 +37,13 @@ Creating a preview provider for a `UIView`:
 import SwiftUI
 import SwiftUIKitView
 
-struct UIKitView_Previews: PreviewProvider {
+struct UILabelExample_Preview: PreviewProvider {
     static var previews: some View {
-        UIKitView()
-            .swiftUIView(layout: .intrinsic)
-            .set(\.title, to: "This is a UIView")
-            .preview(displayName: "A UIKit UIView preview") // A convenience method for creating previews with ease.
+        UILabel() // <- This is a `UIKit` view.
+            .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
+            .set(\.text, to: "Hello, UIKit!") // <- Use key paths for updates.
+            .fixedSize() // <- Make sure the size is set
+            .previewDisplayName("UILabel Preview Example")
     }
 }
 ```
