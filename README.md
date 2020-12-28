@@ -51,7 +51,7 @@ struct UILabelExample_Preview: PreviewProvider {
 
 Which results in the following preview:
 
-<img src="Assets/uikit_uiview_preview.png" width="750"/>
+<img src="Assets/uikit_uilabel_preview.png" width="750"/>
 
 ### KeyPath updating
 
