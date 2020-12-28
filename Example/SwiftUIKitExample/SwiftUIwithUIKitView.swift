@@ -21,11 +21,11 @@ struct SwiftUIwithUIKitView: View {
     }
 }
 
-//struct SwiftUIwithUIKitView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SwiftUIwithUIKitView()
-//    }
-//}
+struct SwiftUIwithUIKitView_Previews: PreviewProvider {
+    static var previews: some View {
+        SwiftUIwithUIKitView()
+    }
+}
 
 // MARK: - UILabel Preview Example
 struct UILabelExample_Preview: PreviewProvider {
@@ -38,3 +38,4 @@ struct UILabelExample_Preview: PreviewProvider {
             .previewDisplayName("UILabel Preview Example")
     }
 }
+
