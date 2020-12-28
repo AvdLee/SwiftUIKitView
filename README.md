@@ -20,9 +20,9 @@ import SwiftUIKitView
 struct SwiftUIwithUIKitView: View {
     var body: some View {
         NavigationView {
-            UIKitView() // <- This is a `UIKit` view.
-                .swiftUIView(layout: .intrinsic) // Use .intrinsic, .fixedWidth(*), or .fixed(size).
-                .set(\.title, to: "Hello, UIKit!") // Use key paths for SwiftUI style updates.
+            UILabel() // <- This can be any `UIKit` view.
+                .swiftUIView(layout: .intrinsic) // <- This is returning a SwiftUI `View`.
+                .set(\.text, to: "Hello, UIKit!") // <- Use key paths for updates.
                 .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
                 .fixedSize()
                 .navigationTitle("Use UIKit in SwiftUI")
