@@ -8,6 +8,9 @@ Easily use UIKit views in your SwiftUI applications.
 Using a `UIKit` view directly in SwiftUI:
 
 ```swift
+import SwiftUI
+import SwiftUIKitView
+
 struct SwiftUIwithUIKitView: View {
     var body: some View {
         NavigationView {
@@ -25,6 +28,9 @@ struct SwiftUIwithUIKitView: View {
 Creating a preview provider for a `UIView`:
 
 ```swift
+import SwiftUI
+import SwiftUIKitView
+
 struct UIKitView_Previews: PreviewProvider {
     static var previews: some View {
         UIKitView()
@@ -38,6 +44,39 @@ struct UIKitView_Previews: PreviewProvider {
 Which results in the following preview:
 
 <img src="Assets/uikit_uiview_preview.png" width="750"/>
+
+### KeyPath updating
+
+This framework also comes with a `KeyPathReferenceWritable` protocol that allows to update objects using functions and writable KeyPath references:
+
+```swift
+/// Defines a type that is configurable using reference writeable keypaths.
+public protocol KeyPathReferenceWritable {
+    associatedtype T
+    associatedtype U
+    
+    func set<Value>(_ keyPath: ReferenceWritableKeyPath<T, Value>, to value: Value) -> U
+}
+
+public extension KeyPathReferenceWritable {
+    func set<Value>(_ keyPath: ReferenceWritableKeyPath<Self, Value>, to value: Value) -> Self {
+        self[keyPath: keyPath] = value
+        return self
+    }
+}
+
+/// Add inheritance for NSObject types to make the methods accessible for many default types.
+extension NSObject: KeyPathReferenceWritable { }
+```
+
+This can be used as follows:
+
+```swift
+UILabel()
+    .set(\.text, to: "Example")
+```
+
+And allows to easily build up SwiftUI style view configurations to keep the same readability when working in SwiftUI.
 
 ## Installation
 

@@ -8,6 +8,12 @@
 import Foundation
 
 /// Defines a type that is configurable using reference writeable keypaths.
+///
+/// Example usage:
+/// 
+/// UILabel()
+///    .set(\.text, to: "Example")
+
 public protocol KeyPathReferenceWritable {
     associatedtype T
     associatedtype U
