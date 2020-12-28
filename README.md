@@ -1,11 +1,11 @@
 # SwiftUIKitView
+![Swift Version](https://img.shields.io/badge/Swift-5.3-F16D39.svg?style=flat) ![Dependency frameworks](https://img.shields.io/badge/Supports-_Swift_Package_Manager-F16D39.svg?style=flat) [![Twitter](https://img.shields.io/badge/twitter-@Twannl-blue.svg?style=flat)](https://twitter.com/twannl)
+
 Easily use UIKit views in SwiftUI.
 
 - Convert `UIView` to SwiftUI `View`
 - Create Xcode Previews from `UIView` elements
 - SwiftUI functional updating `UIView` properties using a protocol with [Associated Types](https://www.avanderlee.com/swift/associated-types-protocols/).
-
-![Swift Version](https://img.shields.io/badge/Swift-5.3-F16D39.svg?style=flat) ![Dependency frameworks](https://img.shields.io/badge/Supports-_Swift_Package_Manager-F16D39.svg?style=flat) [![Twitter](https://img.shields.io/badge/twitter-@Twannl-blue.svg?style=flat)](https://twitter.com/twannl)
 
 ## Examples
 
