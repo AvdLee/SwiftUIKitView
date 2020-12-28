@@ -12,8 +12,8 @@ struct SwiftUIwithUIKitView: View {
     var body: some View {
         NavigationView {
             UIKitView() // <- This is a `UIKit` view.
-                .swiftUIView(layout: .intrinsic)
-                .set(\.title, to: "Hello, UIKit!")
+                .swiftUIView(layout: .intrinsic) // Use .intrinsic, .fixedWidth(*), or .fixed(size).
+                .set(\.title, to: "Hello, UIKit!") // Use key paths for SwiftUI style updates.
                 .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
                 .fixedSize()
                 .navigationTitle("Use UIKit in SwiftUI")
@@ -30,14 +30,14 @@ struct UIKitView_Previews: PreviewProvider {
         UIKitView()
             .swiftUIView(layout: .intrinsic)
             .set(\.title, to: "This is a UIView")
-            .preview(displayName: "A UIKit UIView preview")
+            .preview(displayName: "A UIKit UIView preview") // A convenience method for creating previews with ease.
     }
 }
 ```
 
 Which results in the following preview:
 
-![UIKit UIView Preview](Assets/uikit_uiview_preview.png)
+<img src="Assets/uikit_uiview_preview.png" width="750"/>
 
 ## Installation
 
