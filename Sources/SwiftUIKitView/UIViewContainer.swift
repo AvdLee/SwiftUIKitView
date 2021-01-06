@@ -35,14 +35,20 @@ public struct UIViewContainer<Child: UIView>: Identifiable {
     private var size: CGSize {
         switch layout {
         case .fixedWidth(let width):
-            var compressedSize = UIView.layoutFittingCompressedSize
-            compressedSize.width = width
-            let previewSize = view.systemLayoutSizeFitting(
-                compressedSize,
-                withHorizontalFittingPriority: .required,
-                verticalFittingPriority: .fittingSizeLevel
-            )
-            return previewSize
+            // Set the frame of the cell, so that the layout can be updated.
+            var newFrame = view.frame
+            newFrame.size = CGSize(width: width, height: UIView.layoutFittingExpandedSize.height)
+            view.frame = newFrame
+            
+            // Make sure the contents of the cell have the correct layout.
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            
+            // Get the size of the cell
+            let computedSize = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            
+            // Apple: "Only consider the height for cells, because the contentView isn't anchored correctly sometimes." We use ceil to make sure we get rounded numbers and no half pixels.
+            return CGSize(width: width, height: ceil(computedSize.height))
         case .fixed(let size):
             return size
         case .intrinsic:
