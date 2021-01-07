@@ -63,6 +63,16 @@ public struct UIViewContainer<Child: UIView>: Identifiable {
     public init(_ view: @autoclosure () -> Child, layout: Layout = .intrinsic) {
         self.view = view()
         self.layout = layout
+        
+        switch layout {
+        case .intrinsic:
+            return
+        case .fixed(let size):
+            self.view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            self.view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+        case .fixedWidth(let width):
+            self.view.widthAnchor.constraint(equalToConstant: width).isActive = true
+        }
     }
     
     /// Applies the correct size to the SwiftUI `View` container.
@@ -87,8 +97,6 @@ public struct UIViewContainer<Child: UIView>: Identifiable {
 extension UIViewContainer: UIViewRepresentable {
 
     public func makeUIView(context: Context) -> UIView {
-        view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
-        view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
         return view
     }
     
