@@ -28,36 +28,37 @@ public struct UIViewContainer<Child: UIView> { //}: Identifiable {
         case fixed(size: CGSize)
     }
     
-//    var view: Child! {
-//        get { coordinator.view }
-//    }
+    var view: Child! {
+        get { coordinator.view }
+    }
     private let viewCreator: () -> Child
     private let layout: Layout
+    private let coordinator: Coordinator<Child>
 
     /// - Returns: The `CGSize` to apply to the view.
-//    private var size: CGSize {
-//        switch layout {
-//        case .fixedWidth(let width):
-//            // Set the frame of the cell, so that the layout can be updated.
-//            var newFrame = view.frame
-//            newFrame.size = CGSize(width: width, height: UIView.layoutFittingExpandedSize.height)
-//            view.frame = newFrame
-//
-//            // Make sure the contents of the cell have the correct layout.
-//            view.setNeedsLayout()
-//            view.layoutIfNeeded()
-//
-//            // Get the size of the cell
-//            let computedSize = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//
-//            // Apple: "Only consider the height for cells, because the contentView isn't anchored correctly sometimes." We use ceil to make sure we get rounded numbers and no half pixels.
-//            return CGSize(width: width, height: ceil(computedSize.height))
-//        case .fixed(let size):
-//            return size
-//        case .intrinsic:
-//            return view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//        }
-//    }
+    private var size: CGSize {
+        switch layout {
+        case .fixedWidth(let width):
+            // Set the frame of the cell, so that the layout can be updated.
+            var newFrame = view.frame
+            newFrame.size = CGSize(width: width, height: UIView.layoutFittingExpandedSize.height)
+            view.frame = newFrame
+            
+            // Make sure the contents of the cell have the correct layout.
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            
+            // Get the size of the cell
+            let computedSize = view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            
+            // Apple: "Only consider the height for cells, because the contentView isn't anchored correctly sometimes." We use ceil to make sure we get rounded numbers and no half pixels.
+            return CGSize(width: width, height: ceil(computedSize.height))
+        case .fixed(let size):
+            return size
+        case .intrinsic:
+            return view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        }
+    }
     
     /// Initializes a `UIViewContainer`
     /// - Parameters:
@@ -66,6 +67,7 @@ public struct UIViewContainer<Child: UIView> { //}: Identifiable {
     public init(_ view: @escaping @autoclosure () -> Child, layout: Layout = .intrinsic) {
         self.viewCreator = view
         self.layout = layout
+        self.coordinator = Coordinator(self.viewCreator)
     }
     
     /// Applies the correct size to the SwiftUI `View` container.
@@ -100,28 +102,28 @@ public struct UIViewContainer<Child: UIView> { //}: Identifiable {
 extension UIViewContainer: UIViewRepresentable {
     public func makeCoordinator() -> Coordinator<Child> {
         // Create an instance of Coordinator
-        return Coordinator(self.viewCreator)
+        coordinator
     }
 
     public func makeUIView(context: Context) -> Child {
-        context.coordinator.view = viewCreator()
-        context.coordinator.modifiers.forEach { modifier in
-            modifier(context.coordinator.view)
+        self.coordinator.view = viewCreator()
+        coordinator.modifiers.forEach { modifier in
+            modifier(self.coordinator.view)
         }
         switch layout {
         case .intrinsic:
-            return context.coordinator.view
+            return view
         case .fixed(let size):
-            context.coordinator.view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
-            context.coordinator.view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
+            self.view.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+            self.view.heightAnchor.constraint(equalToConstant: size.height).isActive = true
         case .fixedWidth(let width):
-            context.coordinator.view.widthAnchor.constraint(equalToConstant: width).isActive = true
+            self.view.widthAnchor.constraint(equalToConstant: width).isActive = true
         }
-        return context.coordinator.view
+        return view
     }
     
     public func updateUIView(_ view: Child, context: Context) {
-        context.coordinator.modifiers.forEach { modifier in
+        coordinator.modifiers.forEach { modifier in
             modifier(view)
         }
     }
