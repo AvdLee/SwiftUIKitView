@@ -21,6 +21,10 @@ extension UIView: SwiftUIViewConvertable {}
 @available(iOS 13.0, *)
 public extension SwiftUIViewConvertable where Self: UIView {
     func swiftUIView(layout: Layout) -> UIViewContainer<Self> {
+        assert(
+            ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1",
+            "This method is designed to use in previews only and is not performant for production code. Use `UIViewContainer(<YOUR VIEW>, layout: layout)` instead."
+        )
         return UIViewContainer(self, layout: layout)
     }
 }

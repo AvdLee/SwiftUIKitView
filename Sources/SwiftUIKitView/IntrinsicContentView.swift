@@ -29,7 +29,6 @@ public final class IntrinsicContentView<ContentView: UIView>: UIView {
     private var contentSize: CGSize = .zero {
         didSet {
             invalidateIntrinsicContentSize()
-            print(#function)
         }
     }
 
@@ -45,7 +44,6 @@ public final class IntrinsicContentView<ContentView: UIView>: UIView {
     }
 
     public func updateContentSize() {
-        print(#function)
         switch layout {
         case .fixedWidth(let width):
             // Set the frame of the cell, so that the layout can be updated.
@@ -66,46 +64,6 @@ public final class IntrinsicContentView<ContentView: UIView>: UIView {
             contentSize = size
         case .intrinsic:
             contentSize = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        }
-    }
-
-    public override var frame: CGRect {
-        didSet {
-            guard frame != oldValue || contentSize == .zero else {
-                return
-            }
-
-//            contentView.frame = self.bounds
-//            contentView.layoutIfNeeded()
-//
-//            let targetSize = CGSize(width: frame.width, height: UIView.layoutFittingCompressedSize.height)
-//
-//            contentSize = contentView.systemLayoutSizeFitting(
-//                targetSize,
-//                withHorizontalFittingPriority: .required,
-//                verticalFittingPriority: .fittingSizeLevel)
-
-//            switch layout {
-//            case .fixedWidth(let width):
-//                // Set the frame of the cell, so that the layout can be updated.
-//                var newFrame = contentView.frame
-//                newFrame.size = CGSize(width: width, height: UIView.layoutFittingExpandedSize.height)
-//                contentView.frame = newFrame
-//
-//                // Make sure the contents of the cell have the correct layout.
-//                contentView.setNeedsLayout()
-//                contentView.layoutIfNeeded()
-//
-//                // Get the size of the cell
-//                let computedSize = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//
-//                // Apple: "Only consider the height for cells, because the contentView isn't anchored correctly sometimes." We use ceil to make sure we get rounded numbers and no half pixels.
-//                contentSize = CGSize(width: width, height: ceil(computedSize.height))
-//            case .fixed(let size):
-//                contentSize = size
-//            case .intrinsic:
-//                contentSize = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-//            }
         }
     }
 }
