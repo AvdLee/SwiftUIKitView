@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 final class IntrinsicContentView<ContentView: UIView>: UIView {
-    var contentView: ContentView
+    let contentView: ContentView
     let layout: Layout
 
     init(contentView: ContentView, layout: Layout) {
@@ -25,12 +25,19 @@ final class IntrinsicContentView<ContentView: UIView>: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var contentHeight: CGFloat = .zero {
+    private var contentSize: CGSize = .zero {
         didSet { invalidateIntrinsicContentSize() }
     }
 
     override var intrinsicContentSize: CGSize {
-        .init(width: UIView.noIntrinsicMetric, height: contentHeight)
+        switch layout {
+        case .intrinsic:
+            return contentSize
+        case .fixedWidth(let width):
+            return .init(width: width, height: contentSize.height)
+        case .fixed(let size):
+            return size
+        }
     }
 
     override var frame: CGRect {
@@ -42,10 +49,10 @@ final class IntrinsicContentView<ContentView: UIView>: UIView {
 
             let targetSize = CGSize(width: frame.width, height: UIView.layoutFittingCompressedSize.height)
 
-            contentHeight = contentView.systemLayoutSizeFitting(
+            contentSize = contentView.systemLayoutSizeFitting(
                 targetSize,
                 withHorizontalFittingPriority: .required,
-                verticalFittingPriority: .fittingSizeLevel).height
+                verticalFittingPriority: .fittingSizeLevel)
         }
     }
 }
