@@ -23,7 +23,7 @@ public enum Layout {
 }
 
 public class UIViewContainingCoordinator<Child: UIView> {
-    private(set) var view: Child?
+    private(set) var view: IntrinsicContentView<Child>?
     private var viewCreator: () -> Child
 
     var widthConstraint: NSLayoutConstraint?
@@ -37,25 +37,19 @@ public class UIViewContainingCoordinator<Child: UIView> {
 
     func createView() {
         guard view == nil else { return }
-        view = viewCreator()
-        view?.translatesAutoresizingMaskIntoConstraints = false
+        let contentView = viewCreator()
+        view = IntrinsicContentView(contentView: contentView, layout: layout)
     }
 
     func updateSize(for view: Child) {
-        switch layout {
-        case .intrinsic:
-//            let size = self.size(for: view)
+//        switch layout {
+//        case .intrinsic:
+//            break
+//        case .fixed(let size):
 //            update(view: view, width: size.width, height: size.height)
-            break
-        case .fixed(let size):
-            update(view: view, width: size.width, height: size.height)
-        case .fixedWidth(let width):
-            update(view: view, width: width, height: nil)
-        }
-//        view.setNeedsLayout()
-//        view.layoutIfNeeded()
-//        view.setNeedsUpdateConstraints()
-//        view.updateConstraints()
+//        case .fixedWidth(let width):
+//            update(view: view, width: width, height: nil)
+//        }
     }
 
     private func update(view: Child, width: CGFloat?, height: CGFloat?) {
@@ -129,19 +123,19 @@ extension UIViewContainer: UIViewRepresentable {
         Coordinator(viewCreator, layout: layout)
     }
 
-    public func makeUIView(context: Context) -> Child {
+    public func makeUIView(context: Context) -> IntrinsicContentView<Child> {
         print("MAKE VIEW")
         context.coordinator.createView()
         return context.coordinator.view!
     }
     
-    public func updateUIView(_ view: Child, context: Context) {
+    public func updateUIView(_ view: IntrinsicContentView<Child>, context: Context) {
         print("UPDATE VIEW")
-        update(view, coordinator: context.coordinator)
+        update(view.contentView, coordinator: context.coordinator, updateContentSize: true)
 
     }
 
-    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>) {
+    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>, updateContentSize: Bool) {
         print("UPDATE UIViewContainer")
         uiView.setContentHuggingPriority(.defaultHigh, for: .vertical)
         uiView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
@@ -153,7 +147,7 @@ extension UIViewContainer: UIViewRepresentable {
 public protocol UIViewContaining: UIViewRepresentable {
     associatedtype Child: UIView
     func set<Value>(_ keyPath: ReferenceWritableKeyPath<Child, Value>, to value: Value) -> ModifiedUIViewContainer<Self, Child, Value>
-    func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>)
+    func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>, updateContentSize: Bool)
 }
 
 extension UIViewContaining {
@@ -202,19 +196,23 @@ public struct ModifiedUIViewContainer<ChildContainer: UIViewContaining, Child, V
         child.makeCoordinator() as! UIViewContainingCoordinator<Child>
     }
 
-    public func makeUIView(context: Context) -> Child {
+    public func makeUIView(context: Context) -> IntrinsicContentView<Child> {
         context.coordinator.createView()
         return context.coordinator.view!
     }
 
-    public func updateUIView(_ uiView: Child, context: Context) {
-        update(uiView, coordinator: context.coordinator)
+    public func updateUIView(_ uiView: IntrinsicContentView<Child>, context: Context) {
+        update(uiView.contentView, coordinator: context.coordinator, updateContentSize: true)
     }
 
-    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>) {
+    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>, updateContentSize: Bool) {
         print("UPDATE Modified \(keyPath)")
         uiView[keyPath: keyPath] = value
-        child.update(uiView, coordinator: coordinator)
+        child.update(uiView, coordinator: coordinator, updateContentSize: false)
         coordinator.updateSize(for: uiView)
+
+        if updateContentSize {
+            coordinator.view?.updateContentSize()
+        }
     }
 }
