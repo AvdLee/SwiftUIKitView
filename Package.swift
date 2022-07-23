@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "SwiftUIKitView",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v14),
         .macOS(.v10_15),
-        .tvOS(.v13),
+        .tvOS(.v14),
         .watchOS(.v6)
     ],
     products: [
