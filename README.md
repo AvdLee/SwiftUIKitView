@@ -39,11 +39,11 @@ struct SwiftUIwithUIKitView: View {
 
 ### Using `SwiftUIKitView` in Previews
 Performance in Previews is less important, it's being redrawn either way.
-Therefore, you can use of the more convenient  `swiftUIView()` modifier:
+Therefore, you can use the more convenient  `swiftUIView()` modifier:
 
 ```swift
 UILabel() // <- This is a `UIKit` view.
-    .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
+    .swiftUIView(layout: .intrinsic) // <- This is returning a SwiftUI `View`.
 ```
 
 Creating a preview provider for a `UIView` looks as follows:
