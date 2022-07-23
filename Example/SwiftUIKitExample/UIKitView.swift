@@ -48,6 +48,8 @@ final class UIKitView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+
+        print("INIT")
     }
     
     required init?(coder: NSCoder) {

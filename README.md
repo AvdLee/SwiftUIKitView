@@ -1,5 +1,5 @@
 # SwiftUIKitView
-![Swift Version](https://img.shields.io/badge/Swift-5.3-F16D39.svg?style=flat) ![Dependency frameworks](https://img.shields.io/badge/Supports-_Swift_Package_Manager-F16D39.svg?style=flat) [![Twitter](https://img.shields.io/badge/twitter-@Twannl-blue.svg?style=flat)](https://twitter.com/twannl)
+![Swift Version](https://img.shields.io/badge/Swift-5.5-F16D39.svg?style=flat) ![Dependency frameworks](https://img.shields.io/badge/Supports-_Swift_Package_Manager-F16D39.svg?style=flat) [![Twitter](https://img.shields.io/badge/twitter-@Twannl-blue.svg?style=flat)](https://twitter.com/twannl)
 
 Easily use UIKit views in SwiftUI.
 
@@ -11,7 +11,14 @@ You can read more about [Getting started with UIKit in SwiftUI and visa versa](h
 
 ## Examples
 
-Using a `UIKit` view directly in SwiftUI:
+### Using SwiftUIKitView in Production Code
+Using a `UIKit` view directly in SwiftUI for production code requires you to use:
+
+```swift
+UIViewContainer(<YOUR UIKit View>, layout: <YOUR LAYOUT PREFERENCE>)
+```
+
+This is to prevent a UIKit view from being redrawn on every SwiftUI view redraw.
 
 ```swift
 import SwiftUI
@@ -20,8 +27,7 @@ import SwiftUIKitView
 struct SwiftUIwithUIKitView: View {
     var body: some View {
         NavigationView {
-            UILabel() // <- This can be any `UIKit` view.
-                .swiftUIView(layout: .intrinsic) // <- This is returning a SwiftUI `View`.
+            UIViewContainer(UILabel(), layout: .intrinsic) // <- This can be any `UIKit` view.
                 .set(\.text, to: "Hello, UIKit!") // <- Use key paths for updates.
                 .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
                 .fixedSize()
@@ -31,7 +37,16 @@ struct SwiftUIwithUIKitView: View {
 }
 ```
 
-Creating a preview provider for a `UIView`:
+### Using `SwiftUIKitView` in Previews
+Performance in Previews is less important, it's being redrawn either way.
+Therefore, you can use of the more convenient  `swiftUIView()` modifier:
+
+```swift
+UILabel() // <- This is a `UIKit` view.
+    .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
+```
+
+Creating a preview provider for a `UIView` looks as follows:
 
 ```swift
 import SwiftUI
@@ -96,7 +111,7 @@ Once you have your Swift package set up, adding the SDK as a dependency is as ea
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/AvdLee/SwiftUIKitView.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/AvdLee/SwiftUIKitView.git", .upToNextMajor(from: "2.0.0"))
 ]
 ```
 

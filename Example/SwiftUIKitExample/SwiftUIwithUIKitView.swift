@@ -9,14 +9,22 @@ import SwiftUI
 import SwiftUIKitView
 
 struct SwiftUIwithUIKitView: View {
+    @State var integer: Int = 0
+
     var body: some View {
         NavigationView {
-            UIKitView() // <- This is a `UIKit` view.
-                .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
-                .set(\.title, to: "Hello, UIKit!")
-                .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
-                .fixedSize()
-                .navigationTitle("Use UIKit in SwiftUI")
+            VStack {
+                // Use UIKit inside SwiftUI like this:
+                UIViewContainer(UIKitView(), layout: .intrinsic)
+                    .set(\.title, to: "Hello, UIKit \(integer)!")
+                    .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
+                    .fixedSize()
+                    .navigationTitle("Use UIKit in SwiftUI")
+
+                Button("RANDOMIZED: \(integer)") {
+                    integer = Int.random(in: 0..<300)
+                }
+            }
         }
     }
 }
@@ -38,4 +46,3 @@ struct UILabelExample_Preview: PreviewProvider {
             .previewDisplayName("UILabel Preview Example")
     }
 }
-
