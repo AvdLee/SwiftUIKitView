@@ -9,15 +9,28 @@ import Foundation
 import UIKit
 import SwiftUI
 
+/// The type of Layout to apply to the SwiftUI `View`.
+public enum Layout {
+
+    /// Uses the size returned by .`systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)`.
+    case intrinsic
+
+    /// Uses an intrinsic height combined with a fixed width.
+    case fixedWidth(width: CGFloat)
+
+    /// A fixed width and height is used.
+    case fixed(size: CGSize)
+}
+
 public class UIViewContainingCoordinator<Child: UIView> {
     private(set) var view: Child?
     private var viewCreator: () -> Child
 
     var widthConstraint: NSLayoutConstraint?
     var heightConstraint: NSLayoutConstraint?
-    private let layout: UIViewContainer<Child>.Layout
+    private let layout: Layout
 
-    init(_ viewCreator: @escaping () -> Child, layout: UIViewContainer<Child>.Layout) {
+    init(_ viewCreator: @escaping () -> Child, layout: Layout) {
         self.viewCreator = viewCreator
         self.layout = layout
     }
@@ -31,17 +44,18 @@ public class UIViewContainingCoordinator<Child: UIView> {
     func updateSize(for view: Child) {
         switch layout {
         case .intrinsic:
-            let size = self.size(for: view)
-            update(view: view, width: size.width, height: size.height)
+//            let size = self.size(for: view)
+//            update(view: view, width: size.width, height: size.height)
+            break
         case .fixed(let size):
             update(view: view, width: size.width, height: size.height)
         case .fixedWidth(let width):
             update(view: view, width: width, height: nil)
         }
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        view.setNeedsUpdateConstraints()
-        view.updateConstraints()
+//        view.setNeedsLayout()
+//        view.layoutIfNeeded()
+//        view.setNeedsUpdateConstraints()
+//        view.updateConstraints()
     }
 
     private func update(view: Child, width: CGFloat?, height: CGFloat?) {
@@ -91,31 +105,18 @@ public class UIViewContainingCoordinator<Child: UIView> {
 
 /// A container for UIKit `UIView` elements. Conforms to the `UIViewRepresentable` protocol to allow conversion into SwiftUI `View`s.
 @available(iOS 13.0, *)
-public struct UIViewContainer<Child: UIView> { //}: Identifiable {
-    
-//    public var id: UIView { view }
+public struct UIViewContainer<Child: UIView> {
 
-    /// The type of Layout to apply to the SwiftUI `View`.
-    public enum Layout {
+    let viewCreator: () -> Child
+    let layout: Layout
 
-        /// Uses the size returned by .`systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)`.
-        case intrinsic
-        
-        /// Uses an intrinsic height combined with a fixed width.
-        case fixedWidth(width: CGFloat)
-        
-        /// A fixed width and height is used.
-        case fixed(size: CGSize)
-    }
-
-    @State public var coordinator: UIViewContainingCoordinator<Child>
-    
     /// Initializes a `UIViewContainer`
     /// - Parameters:
     ///   - view: `UIView` being previewed
     ///   - layout: The layout to apply on the `UIView`. Defaults to `intrinsic`.
     public init(_ viewCreator: @escaping @autoclosure () -> Child, layout: Layout = .intrinsic) {
-        self.coordinator = UIViewContainingCoordinator(viewCreator, layout: layout)
+        self.viewCreator = viewCreator
+        self.layout = layout
     }
 }
 
@@ -125,36 +126,46 @@ public struct UIViewContainer<Child: UIView> { //}: Identifiable {
 extension UIViewContainer: UIViewRepresentable {
     public func makeCoordinator() -> UIViewContainingCoordinator<Child> {
         // Create an instance of Coordinator
-        coordinator
+        Coordinator(viewCreator, layout: layout)
     }
 
     public func makeUIView(context: Context) -> Child {
+        print("MAKE VIEW")
         context.coordinator.createView()
         return context.coordinator.view!
     }
     
     public func updateUIView(_ view: Child, context: Context) {
-        update(view)
-        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        view.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        print("UPDATE VIEW")
+        update(view, coordinator: context.coordinator)
+
     }
 
-    public func update(_ uiView: Child) {
+    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>) {
+        print("UPDATE UIViewContainer")
+        uiView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        uiView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         coordinator.updateSize(for: uiView)
+        print(uiView.intrinsicContentSize)
     }
 }
 
 public protocol UIViewContaining: UIViewRepresentable {
     associatedtype Child: UIView
-    var coordinator: UIViewContainingCoordinator<Child> { get }
     func set<Value>(_ keyPath: ReferenceWritableKeyPath<Child, Value>, to value: Value) -> ModifiedUIViewContainer<Self, Child, Value>
-    func update(_ uiView: Child)
+    func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>)
 }
 
 extension UIViewContaining {
     public func set<Value>(_ keyPath: ReferenceWritableKeyPath<Child, Value>, to value: Value) -> ModifiedUIViewContainer<Self, Child, Value> {
         ModifiedUIViewContainer(child: self, keyPath: keyPath, value: value)
     }
+
+//    public func fixedSize() -> some View
+//    {
+//        print("FIXED SIZE")
+//        return self.background(Color.blue)
+//    }
 
     /// Applies the correct size to the SwiftUI `View` container.
     /// - Returns: A `View` with the correct size applied.
@@ -183,28 +194,27 @@ public extension View {
 extension UIViewContainer: UIViewContaining { }
 public struct ModifiedUIViewContainer<ChildContainer: UIViewContaining, Child, Value>: UIViewContaining where ChildContainer.Child == Child {
     var child: ChildContainer
-    public var coordinator: UIViewContainingCoordinator<Child> {
-        child.coordinator
-    }
+
     @State var keyPath: ReferenceWritableKeyPath<Child, Value>
     @State var value: Value
 
     public func makeCoordinator() -> UIViewContainingCoordinator<Child> {
-        coordinator
+        child.makeCoordinator() as! UIViewContainingCoordinator<Child>
     }
 
     public func makeUIView(context: Context) -> Child {
-        coordinator.createView()
-        return coordinator.view!
+        context.coordinator.createView()
+        return context.coordinator.view!
     }
 
     public func updateUIView(_ uiView: Child, context: Context) {
-        update(uiView)
+        update(uiView, coordinator: context.coordinator)
     }
 
-    public func update(_ uiView: Child) {
+    public func update(_ uiView: Child, coordinator: UIViewContainingCoordinator<Child>) {
+        print("UPDATE Modified \(keyPath)")
         uiView[keyPath: keyPath] = value
-        child.update(uiView)
+        child.update(uiView, coordinator: coordinator)
         coordinator.updateSize(for: uiView)
     }
 }

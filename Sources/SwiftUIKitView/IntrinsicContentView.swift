@@ -1,0 +1,51 @@
+//
+//  IntrinsicContentView.swift
+//  
+//
+//  Created by Antoine van der Lee on 23/07/2022.
+//
+
+import Foundation
+import UIKit
+
+final class IntrinsicContentView<ContentView: UIView>: UIView {
+    var contentView: ContentView
+    let layout: Layout
+
+    init(contentView: ContentView, layout: Layout) {
+        self.contentView = contentView
+        self.layout = layout
+
+        super.init(frame: .zero)
+        backgroundColor = .clear
+        addSubview(contentView)
+    }
+
+    @available(*, unavailable) required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private var contentHeight: CGFloat = .zero {
+        didSet { invalidateIntrinsicContentSize() }
+    }
+
+    override var intrinsicContentSize: CGSize {
+        .init(width: UIView.noIntrinsicMetric, height: contentHeight)
+    }
+
+    override var frame: CGRect {
+        didSet {
+            guard frame != oldValue else { return }
+
+            contentView.frame = self.bounds
+            contentView.layoutIfNeeded()
+
+            let targetSize = CGSize(width: frame.width, height: UIView.layoutFittingCompressedSize.height)
+
+            contentHeight = contentView.systemLayoutSizeFitting(
+                targetSize,
+                withHorizontalFittingPriority: .required,
+                verticalFittingPriority: .fittingSizeLevel).height
+        }
+    }
+}

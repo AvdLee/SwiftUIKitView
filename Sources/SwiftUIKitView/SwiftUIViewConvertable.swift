@@ -12,7 +12,7 @@ import UIKit
 @available(iOS 13.0, *)
 public protocol SwiftUIViewConvertable {
     associatedtype View: UIView
-    func swiftUIView(layout: UIViewContainer<View>.Layout) -> UIViewContainer<View>
+    func swiftUIView(layout: Layout) -> UIViewContainer<View>
 }
 
 /// Add default protocol comformance for `UIView` instances.
@@ -20,7 +20,7 @@ extension UIView: SwiftUIViewConvertable {}
 
 @available(iOS 13.0, *)
 public extension SwiftUIViewConvertable where Self: UIView {
-    func swiftUIView(layout: UIViewContainer<Self>.Layout) -> UIViewContainer<Self> {
+    func swiftUIView(layout: Layout) -> UIViewContainer<Self> {
         return UIViewContainer(self, layout: layout)
     }
 }
