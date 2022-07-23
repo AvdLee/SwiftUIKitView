@@ -39,6 +39,7 @@ struct SwiftUIwithUIKitView: View {
 
 ### Using `SwiftUIKitView` in Previews
 Performance in Previews is less important, it's being redrawn either way.
+
 Therefore, you can use the more convenient  `swiftUIView()` modifier:
 
 ```swift
