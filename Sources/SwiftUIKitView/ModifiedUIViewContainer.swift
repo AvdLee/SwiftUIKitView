@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import UIKit
 
+@dynamicMemberLookup
 public struct ModifiedUIViewContainer<ChildContainer: UIViewContaining, Child, Value>: UIViewContaining where ChildContainer.Child == Child {
 
     let child: ChildContainer
@@ -34,6 +35,10 @@ public struct ModifiedUIViewContainer<ChildContainer: UIViewContaining, Child, V
         if updateContentSize {
             coordinator.view?.updateContentSize()
         }
+    }
+    
+    public subscript<Value>(dynamicMember keyPath: ReferenceWritableKeyPath<Child, Value>) -> (Value) -> ModifiedUIViewContainer<Self, Child, Value> {
+        { self.set(keyPath, to: $0) }
     }
 }
 

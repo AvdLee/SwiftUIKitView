@@ -16,8 +16,8 @@ struct SwiftUIwithUIKitView: View {
             VStack {
                 // Use UIKit inside SwiftUI like this:
                 UIViewContainer(UIKitView(), layout: .intrinsic)
-                    .set(\.title, to: "Hello, UIKit \(integer)!")
-                    .set(\.backgroundColor, to: UIColor(named: "swiftlee_orange"))
+                    .title("Hello, UIKit \(integer)!")
+                    .backgroundColor(UIColor(named: "swiftlee_orange"))
                     .fixedSize()
                     .navigationTitle("Use UIKit in SwiftUI")
 
@@ -40,7 +40,7 @@ struct UILabelExample_Preview: PreviewProvider {
     static var previews: some View {
         UILabel() // <- This is a `UIKit` view.
             .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
-            .set(\.text, to: "Hello, UIKit!") // <- Use key paths for updates.
+            .text("Hello, UIKit!") // <- Set UIView properties as if they were SwiftUI properties
             .fixedSize() // <- Make sure the size is set
             .previewLayout(.sizeThatFits)
             .previewDisplayName("UILabel Preview Example")
