@@ -40,7 +40,7 @@ struct UILabelExample_Preview: PreviewProvider {
     static var previews: some View {
         UILabel() // <- This is a `UIKit` view.
             .swiftUIView(layout: .intrinsic) // <- This is a SwiftUI `View`.
-            .text("Hello, UIKit!") // <- Use key paths for updates.
+            .text("Hello, UIKit!") // <- Set UIView properties as if they were SwiftUI properties
             .fixedSize() // <- Make sure the size is set
             .previewLayout(.sizeThatFits)
             .previewDisplayName("UILabel Preview Example")
