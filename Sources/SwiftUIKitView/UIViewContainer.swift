@@ -11,6 +11,7 @@ import SwiftUI
 
 /// A container for UIKit `UIView` elements. Conforms to the `UIViewRepresentable` protocol to allow conversion into SwiftUI `View`s.
 @available(iOS 13.0, *)
+@dynamicMemberLookup
 public struct UIViewContainer<Child: UIView> {
 
     let viewCreator: () -> Child
@@ -23,6 +24,10 @@ public struct UIViewContainer<Child: UIView> {
     public init(_ viewCreator: @escaping @autoclosure () -> Child, layout: Layout = .intrinsic) {
         self.viewCreator = viewCreator
         self.layout = layout
+    }
+    
+    public subscript<Value>(dynamicMember keyPath: ReferenceWritableKeyPath<Child, Value>) -> (Value) -> ModifiedUIViewContainer<Self, Child, Value> {
+        { self.set(keyPath, to: $0) }
     }
 }
 

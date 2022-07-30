@@ -13,7 +13,7 @@ struct UIKitView_Previews: PreviewProvider {
     static var previews: some View {
         UIKitView()
             .swiftUIView(layout: .intrinsic)
-            .set(\.title, to: "This is a UIView")
+            .title("This is a UIView")
             .preview(displayName: "A UIKit UIView preview")
     }
 }
